@@ -51,6 +51,34 @@ class Event
   end
 end
 
+# EventGenerator can be used to generate repeating Events
+#
+# see appointments.rb#DailyAppointment for how to use
+# EventGenerator
+#
+module EventGenerator
+  # Generate a sequence of events by starting
+  # from the originally given 'event', applying
+  # the 'generator' to it and all the following
+  # generated events.
+  #
+  # A class that mixes in (includes) EventGenerator
+  # needs to define 'next_start(event)' which
+  # needs to given the 'start' of the next Event
+  # given the previous 'event'.
+  #
+  def each
+     current_event = self
+     while(true) do
+         new_event = self.clone
+         new_event.start = next_start(current_event)
+         new_event.source = current_event.source
+         yield(new_event)
+         current_event = new_event
+     end
+  end
+end
+
 class Involvement < Event
   attr_accessor :has_conflict
 

@@ -82,7 +82,24 @@ class TestTimetable < Minitest::Test
       assert_equal(a1,err.involvement_a)
       assert_equal(a2,err.involvement_b)
     end
-
   end
+end
  
+require_relative 'appointments'
+
+class TestAppointment < Minitest::Test
+  def test_dailyappointments_are_separated_by_one_day
+    a = DailyAppointment.new(title: "a1", start: DateTime.parse("2016-12-15 17:05:00"))
+    
+    sequence_no = 0
+    previous_appointment = a
+    a.each do |new_appointment|
+      sequence_no += 1
+      # assume that we have verified, that EventGenerator works
+      # after the 3rd iteration:
+      break if sequence_no == 4 
+      assert_equal(previous_appointment.start + 1.day, new_appointment.start)
+      previous_appointment = new_appointment
+    end
+  end
 end
